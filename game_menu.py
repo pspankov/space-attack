@@ -1,5 +1,7 @@
 from sys import exit
 
+from const import SCREEN_WIDTH
+
 
 class MenuItemFactory:
     def __init__(self, font, color):
@@ -30,10 +32,10 @@ class GameMenu:
         self.game_font = self.pygame.font.Font('fonts/kenvector_future_thin.ttf', 30)
         self.menu_factory = MenuItemFactory(self.game_font, 'White')
         self.menu_items = [
-            self.menu_factory.create('1 Player', (400, 50), None, True),
-            self.menu_factory.create('2 Players', (400, 100), None),
-            self.menu_factory.create('Options', (400, 150), None),
-            self.menu_factory.create('Exit', (400, 200), lambda: [pygame.quit(), exit()])
+            self.menu_factory.create('1 Player', (SCREEN_WIDTH/2, 200), None, True),
+            self.menu_factory.create('2 Players', (SCREEN_WIDTH/2, 250), None),
+            self.menu_factory.create('Options', (SCREEN_WIDTH/2, 300), None),
+            self.menu_factory.create('Exit', (SCREEN_WIDTH/2, 350), lambda: [pygame.quit(), exit()])
         ]
 
     def get_selected(self):

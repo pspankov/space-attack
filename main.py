@@ -1,20 +1,22 @@
 import pygame
 from sys import exit
 
-from const import WINDOW_NAME
+from background import Background
+from const import WINDOW_NAME, SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 from game_menu import GameMenu
 
 
+pygame.init()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption(WINDOW_NAME)
+clock = pygame.time.Clock()
+
+
 def main():
-    pygame.init()
-    screen = pygame.display.set_mode((800, 400))
-    pygame.display.set_caption(WINDOW_NAME)
-    clock = pygame.time.Clock()
-
-    sky_surf = pygame.image.load('graphics/backgrounds/darkPurple.png').convert()
-
+    background = Background(pygame, screen)
     game_menu = GameMenu(pygame, screen)
 
+    # game loop
     while True:
         events = pygame.event.get()
         for event in events:
@@ -22,10 +24,11 @@ def main():
                 pygame.quit()
                 exit()
 
-        screen.blit(sky_surf, (300, 0))
+        # screen.blit(bg, (300, 0))
+        background.update()
         game_menu.update(events)
         pygame.display.update()
-        clock.tick(60)  # ensures that the while loop will not run faster than 60 times/second
+        clock.tick(FPS)  # ensures that the while loop will not run faster than 60 times/second
 
 
 if __name__ == '__main__':
