@@ -1,6 +1,6 @@
 from sys import exit
 
-from const import SCREEN_WIDTH
+from const import SCREEN_WIDTH, MENU_COLOR, TITLE_COLOR
 
 
 class MenuItemFactory:
@@ -17,7 +17,7 @@ class MenuItemFactory:
 
     def create(self, title, pos, action, selected=False):
         menu_surf = self.font.render(title, True, self.color)
-        return self.MenuItem(menu_surf, menu_surf.get_rect(center=pos), action, selected)
+        return self.MenuItem(menu_surf, menu_surf.get_rect(midbottom=pos), action, selected)
 
 
 class GameMenu:
@@ -28,15 +28,23 @@ class GameMenu:
         """
         self.pygame = pygame
         self.screen = screen
-        self.is_active = True
-        self.game_font = self.pygame.font.Font('fonts/kenvector_future_thin.ttf', 30)
-        self.menu_factory = MenuItemFactory(self.game_font, 'White')
+        self.is_active = False
+        menu_font = self.pygame.font.Font('fonts/kenvector_future_thin.ttf', 30)
+        # game title
+        title_font = self.pygame.font.Font('fonts/kenvector_future.ttf', 40)
+        self.title = title_font.render('Space Attack', True, TITLE_COLOR)
+        self.title_rect = self.title.get_rect(midbottom=(SCREEN_WIDTH/2, 100))
+
+        self.menu_factory = MenuItemFactory(menu_font, MENU_COLOR)
         self.menu_items = [
-            self.menu_factory.create('1 Player', (SCREEN_WIDTH/2, 200), None, True),
-            self.menu_factory.create('2 Players', (SCREEN_WIDTH/2, 250), None),
-            self.menu_factory.create('Options', (SCREEN_WIDTH/2, 300), None),
-            self.menu_factory.create('Exit', (SCREEN_WIDTH/2, 350), lambda: [pygame.quit(), exit()])
+            self.menu_factory.create('1 Player', (SCREEN_WIDTH/2, 300), lambda: self.close(), True),
+            self.menu_factory.create('2 Players', (SCREEN_WIDTH/2, 350), None),
+            self.menu_factory.create('Options', (SCREEN_WIDTH/2, 400), None),
+            self.menu_factory.create('Exit', (SCREEN_WIDTH/2, 450), lambda: [pygame.quit(), exit()])
         ]
+        self.music_is_playing = True
+        self.menu_music = pygame.mixer.Sound('audio/start_screen.wav')
+        self.menu_music.set_volume(0.3)
 
     def get_selected(self):
         for menu_item in self.menu_items:
@@ -55,9 +63,8 @@ class GameMenu:
                 return next_item
 
     def update(self, events):
-        if self.is_active:
-            self.handle_events(events)
-            self.show()
+        self.handle_events(events)
+        self.draw()
 
     def handle_events(self, events):
         for event in events:
@@ -69,8 +76,19 @@ class GameMenu:
                 if event.key == self.pygame.K_RETURN:
                     self.get_selected().action()
 
-    def show(self):
+    def draw(self):
+        self.screen.blit(self.title, self.title_rect)
         # highlight effect of active item
-        self.pygame.draw.rect(self.screen, 'Gray', self.get_selected())
+        self.pygame.draw.rect(self.screen, '#6777b8', self.get_selected())
         for menu_item in self.menu_items:
             self.screen.blit(menu_item.surf, menu_item.rect)
+
+    def show(self):
+        self.is_active = True
+        self.menu_music.play(loops=-1)
+        self.music_is_playing = True
+
+    def close(self):
+        self.is_active = False
+        self.menu_music.stop()
+        self.music_is_playing = False

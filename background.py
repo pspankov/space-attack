@@ -1,11 +1,11 @@
+import pygame as pg
 from const import MOVING_SPEED
 
 
 class Background:
-    def __init__(self, pygame, screen):
-        self.pygame = pygame
+    def __init__(self, screen):
         self.screen = screen
-        self.bg_image = pygame.image.load('graphics/backgrounds/640x480_background.png').convert()
+        self.bg_image = pg.image.load('graphics/backgrounds/640x480_background.png').convert()
         self.bg_rect = self.bg_image.get_rect()
 
         self.bg_y1 = 0
