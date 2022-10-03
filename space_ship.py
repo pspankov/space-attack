@@ -1,4 +1,5 @@
 import pygame as pg
+import pygame.transform
 
 from const import SCREEN_WIDTH, SPACE_SHIP_SPEED, SCREEN_HEIGHT
 
@@ -7,6 +8,7 @@ class SpaceShip(pg.sprite.Sprite):
     def __init__(self):
         super(SpaceShip, self).__init__()
         self.image = pg.image.load('graphics/png/playerShip1_red.png').convert_alpha()
+        self.image = pygame.transform.rotozoom(self.image, 0, 0.7)
         self.rect = self.image.get_rect(midbottom=(SCREEN_WIDTH/2, 600))
 
     def handle_input(self):

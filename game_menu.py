@@ -1,6 +1,6 @@
 from sys import exit
 
-from const import SCREEN_WIDTH, MENU_COLOR, TITLE_COLOR
+from const import SCREEN_WIDTH, MENU_COLOR, TITLE_COLOR, GAME_TITLE
 
 
 class MenuItemFactory:
@@ -32,7 +32,7 @@ class GameMenu:
         menu_font = self.pygame.font.Font('fonts/kenvector_future_thin.ttf', 30)
         # game title
         title_font = self.pygame.font.Font('fonts/kenvector_future.ttf', 40)
-        self.title = title_font.render('Space Attack', True, TITLE_COLOR)
+        self.title = title_font.render(GAME_TITLE, True, TITLE_COLOR)
         self.title_rect = self.title.get_rect(midbottom=(SCREEN_WIDTH/2, 100))
 
         self.menu_factory = MenuItemFactory(menu_font, MENU_COLOR)

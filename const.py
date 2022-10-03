@@ -1,4 +1,4 @@
-WINDOW_NAME = 'Space Attack'
+GAME_TITLE = 'Space Attack'
 FPS = 60
 SCREEN_WIDTH = 480
 SCREEN_HEIGHT = 640

@@ -2,7 +2,8 @@ import pygame
 from sys import exit
 
 from background import Background
-from const import WINDOW_NAME, SCREEN_HEIGHT, SCREEN_WIDTH, FPS
+from const import GAME_TITLE, SCREEN_HEIGHT, SCREEN_WIDTH, FPS
+from enemy import Enemy
 from game_menu import GameMenu
 from space_ship import SpaceShip
 
@@ -10,7 +11,7 @@ from space_ship import SpaceShip
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption(WINDOW_NAME)
+    pygame.display.set_caption(GAME_TITLE)
     clock = pygame.time.Clock()
 
     background = Background(screen)
@@ -23,6 +24,8 @@ def main():
 
     space_ship = SpaceShip()
     space_ship = pygame.sprite.GroupSingle(space_ship)
+
+    enemies_list = pygame.sprite.Group([Enemy()])
 
     # game loop
     while True:
@@ -44,11 +47,15 @@ def main():
             music.stop()
         else:
             # gameplay mode
-            space_ship.draw(screen)
-            space_ship.update()
             if not music_is_playing:
                 music_is_playing = True
                 music.play(loops=-1)
+
+            space_ship.draw(screen)
+            space_ship.update()
+
+            enemies_list.draw(screen)
+            enemies_list.update()
 
         pygame.display.update()
         clock.tick(FPS)  # ensures that the while loop will not run faster than 60 times/second
