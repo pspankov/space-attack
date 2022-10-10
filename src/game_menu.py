@@ -1,27 +1,32 @@
 from sys import exit
 
-from const import SCREEN_WIDTH, MENU_COLOR, TITLE_COLOR, GAME_TITLE
+from .const import SCREEN_WIDTH, MENU_COLOR, TITLE_COLOR, GAME_TITLE
 
 
 class MenuItemFactory:
-    def __init__(self, font, color):
+    def __init__(self, font, color, pos):
         self.font = font
         self.color = color
+        self.start_pos = pos
+        self.menu_items = []
 
     class MenuItem:
-        def __init__(self, surf, rect, action, selected=False):
+        def __init__(self, title, surf, rect, action, selected=False):
+            self.title = title
             self.surf = surf
             self.rect = rect
             self.action = action
             self.selected = selected
 
-    def create(self, title, pos, action, selected=False):
+    def create(self, title, action, selected=False, pos=None):
         menu_surf = self.font.render(title, True, self.color)
-        return self.MenuItem(menu_surf, menu_surf.get_rect(midbottom=pos), action, selected)
+        pos = pos or self.start_pos
+        self.start_pos = (self.start_pos[0], self.start_pos[1] + 50)
+        return self.MenuItem(title, menu_surf, menu_surf.get_rect(midbottom=pos), action, selected)
 
 
 class GameMenu:
-    def __init__(self, pygame, screen):
+    def __init__(self, pygame, screen, one_p_func):
         """
         :type pygame: pygame
         :type screen: Union[pygame.surface.Surface, pygame.surface.SurfaceType]
@@ -35,16 +40,13 @@ class GameMenu:
         self.title = title_font.render(GAME_TITLE, True, TITLE_COLOR)
         self.title_rect = self.title.get_rect(midbottom=(SCREEN_WIDTH/2, 100))
 
-        self.menu_factory = MenuItemFactory(menu_font, MENU_COLOR)
+        self.menu_factory = MenuItemFactory(menu_font, MENU_COLOR, (SCREEN_WIDTH/2, 300))
         self.menu_items = [
-            self.menu_factory.create('1 Player', (SCREEN_WIDTH/2, 300), lambda: self.close(), True),
-            self.menu_factory.create('2 Players', (SCREEN_WIDTH/2, 350), None),
-            self.menu_factory.create('Options', (SCREEN_WIDTH/2, 400), None),
-            self.menu_factory.create('Exit', (SCREEN_WIDTH/2, 450), lambda: [pygame.quit(), exit()])
+            self.menu_factory.create('Start', lambda: [self.close(), one_p_func()], True),
+            # self.menu_factory.create('2 Players', None),
+            self.menu_factory.create('Options', None),
+            self.menu_factory.create('Exit', lambda: [pygame.quit(), exit()])
         ]
-        self.music_is_playing = True
-        self.menu_music = pygame.mixer.Sound('audio/start_screen.wav')
-        self.menu_music.set_volume(0.3)
 
     def get_selected(self):
         for menu_item in self.menu_items:
@@ -85,10 +87,6 @@ class GameMenu:
 
     def show(self):
         self.is_active = True
-        self.menu_music.play(loops=-1)
-        self.music_is_playing = True
 
     def close(self):
         self.is_active = False
-        self.menu_music.stop()
-        self.music_is_playing = False

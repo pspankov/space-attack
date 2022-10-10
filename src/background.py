@@ -1,5 +1,5 @@
 import pygame as pg
-from const import MOVING_SPEED
+from .const import BACKGROUND_SPEED
 
 
 class Background:
@@ -14,7 +14,7 @@ class Background:
         self.bg_y2 = self.bg_rect.height
         self.bg_x2 = 0
 
-        self.moving_speed = MOVING_SPEED
+        self.moving_speed = BACKGROUND_SPEED
 
     def update(self):
         self.bg_y1 += self.moving_speed

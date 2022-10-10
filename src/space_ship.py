@@ -1,10 +1,13 @@
 import pygame as pg
 import pygame.transform
 
-from const import SCREEN_WIDTH, SPACE_SHIP_SPEED, SCREEN_HEIGHT
+from .const import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class SpaceShip(pg.sprite.Sprite):
+    horizontal_speed = 6
+    vertical_speed = 4
+
     def __init__(self):
         super(SpaceShip, self).__init__()
         self.image = pg.image.load('graphics/png/playerShip1_red.png').convert_alpha()
@@ -13,14 +16,15 @@ class SpaceShip(pg.sprite.Sprite):
 
     def handle_input(self):
         keys = pg.key.get_pressed()
+
         if (keys[pg.K_LEFT] or keys[pg.K_a]) and self.rect.left > 0:
-            self.rect.x -= SPACE_SHIP_SPEED
+            self.rect.x -= self.horizontal_speed
         if (keys[pg.K_RIGHT] or keys[pg.K_d]) and self.rect.right < SCREEN_WIDTH:
-            self.rect.x += SPACE_SHIP_SPEED
+            self.rect.x += self.horizontal_speed
         if (keys[pg.K_UP] or keys[pg.K_w]) and self.rect.top > 0:
-            self.rect.y -= SPACE_SHIP_SPEED
+            self.rect.y -= self.vertical_speed
         if (keys[pg.K_DOWN] or keys[pg.K_s]) and self.rect.bottom < SCREEN_HEIGHT:
-            self.rect.y += SPACE_SHIP_SPEED
+            self.rect.y += self.vertical_speed
 
     def update(self):
         self.handle_input()
