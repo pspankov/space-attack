@@ -1,15 +1,18 @@
 import pygame as pg
 
+from src.state import State
+
 
 class MusicPlayer:
-    def __init__(self):
+    def __init__(self, game_state: State):
+        self.game_state = game_state
         self.is_playing = False
         self.sounds = {
-            'menu': 'audio/start_screen.wav',
-            'level_1': 'audio/level_1.wav',
-            'level_2': 'audio/level_2.wav',
-            'level_3': 'audio/level_3.wav',
-            'game_over': 'audio/game_over.wav',
+            'menu': 'resources/audio/start_screen.wav',
+            'level_1': 'resources/audio/level_1.wav',
+            'level_2': 'resources/audio/level_2.wav',
+            'level_3': 'resources/audio/level_3.wav',
+            'game_over': 'resources/audio/game_over.wav',
         }
         self.current_sound = None
         self.current_sound_name = ''
@@ -36,4 +39,12 @@ class MusicPlayer:
             self.stop()
             self.load_sound(sound)
             self.start()
+
+    def update(self):
+        if self.game_state.game_over:
+            self.play('game_over')
+        elif not self.game_state.running:
+            self.play('menu')
+        elif self.game_state.running:
+            self.play(f'level_{self.game_state.level}')
 

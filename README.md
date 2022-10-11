@@ -12,7 +12,7 @@ pip3 install pygame
 To start the game execute the following
 
 ```bash
-python3 <path-to-game>/main.py
+python3 <path-to-game>/run_game.py
 ```
 
 # Keymap

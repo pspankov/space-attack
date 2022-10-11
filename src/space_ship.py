@@ -8,9 +8,9 @@ class SpaceShip(pg.sprite.Sprite):
     horizontal_speed = 6
     vertical_speed = 4
 
-    def __init__(self):
+    def __init__(self, type, color):
         super(SpaceShip, self).__init__()
-        self.image = pg.image.load('graphics/png/playerShip1_red.png').convert_alpha()
+        self.image = pg.image.load(f'resources/graphics/png/playerShip{type}_{color}.png').convert_alpha()
         self.image = pygame.transform.rotozoom(self.image, 0, 0.7)
         self.rect = self.image.get_rect(midbottom=(SCREEN_WIDTH/2, 600))
 

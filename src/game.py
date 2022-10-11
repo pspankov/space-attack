@@ -1,93 +1,43 @@
 import pygame as pg
 
-from .enemy import Enemy
-from .laser import Laser
-from .meteor import Meteor
-from .space_ship import SpaceShip
+from configparser import ConfigParser
+from src.const import GAME_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT, FPS
+from src.engine import Engine
+from src.music_player import MusicPlayer
+from src.screens.background import Background
+from src.screens.game_menu import GameMenu
+from src.state import State
+from src.ui import UI
 
 
 class Game:
-    def __init__(self, screen):
-        """
-        :type screen: Union[pygame.surface.Surface, pygame.surface.SurfaceType]
-        """
-        self.screen = screen
-        self.level = 1
-        self.running = False
-        self.game_over = False
+    def __init__(self):
 
-        self.enemy_timer = pg.USEREVENT + 1
-        self.set_enemy_spawn_time(1500)
+        pg.display.set_caption(GAME_TITLE)
+        self.config = ConfigParser()
+        self.config.read('settings.ini')
+        self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        self.meteor_timer = pg.USEREVENT + 2
-        self.set_meteor_spawn_time(3000)
+        self.clock = pg.time.Clock()
+        self.state = State()
+        self.engine = Engine(self.screen, self.state, self.config['USER'])
+        self.ui = UI(self.screen, self.state, self.config['USER'])
+        self.music_player = MusicPlayer(self.state)
+        self.background = Background(self.screen)
 
-        space_ship = SpaceShip()
-        self.space_ship = pg.sprite.GroupSingle(space_ship)
-        self.enemies_group = pg.sprite.Group()
-        self.meteors_group = pg.sprite.Group()
-        self.lasers_group = pg.sprite.Group()
+    def run(self):
+        # game loop
+        while True:
+            events = pg.event.get()
 
-    def start(self):
-        self.running = True
+            for event in events:
+                if event.type == pg.QUIT:
+                    GameMenu.exit()
 
-    def pause(self):
-        self.running = False
+            self.background.update()
+            self.engine.update(events)
+            self.ui.update(events)
+            self.music_player.update()
 
-    def collision(self):
-        if pg.sprite.spritecollide(self.space_ship.sprite, self.enemies_group, False):
-            self.enemies_group.empty()
-            return True
-
-        if pg.sprite.spritecollide(self.space_ship.sprite, self.meteors_group, False):
-            self.meteors_group.empty()
-            return True
-
-        return False
-
-    def hit(self):
-        for laser in self.lasers_group.sprites():
-            if len(pg.sprite.spritecollide(laser, self.enemies_group, True)):
-                laser.kill()
-            if len(pg.sprite.spritecollide(laser, self.meteors_group, False)):
-                laser.kill()
-
-    def handle_input(self, events):
-        for event in events:
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE:
-                    self.lasers_group.add(Laser(self.space_ship.sprite.rect.midtop))
-
-            if event.type == self.enemy_timer:
-                self.enemies_group.add(Enemy())
-
-            if event.type == self.meteor_timer:
-                self.meteors_group.add(Meteor())
-
-    def update(self, events):
-        if self.running:
-            self.handle_input(events)
-
-            self.space_ship.draw(self.screen)
-            self.space_ship.update()
-
-            self.lasers_group.draw(self.screen)
-            self.lasers_group.update()
-
-            self.enemies_group.draw(self.screen)
-            self.enemies_group.update()
-
-            self.meteors_group.draw(self.screen)
-            self.meteors_group.update()
-
-            self.hit()
-
-            if self.collision():
-                self.running = False
-                self.game_over = True
-
-    def set_enemy_spawn_time(self, time):
-        pg.time.set_timer(self.enemy_timer, time)
-
-    def set_meteor_spawn_time(self, time):
-        pg.time.set_timer(self.meteor_timer, time)
+            pg.display.update()
+            self.clock.tick(FPS)  # ensures that the while loop will not run faster than 60 times/second

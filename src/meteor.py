@@ -6,13 +6,13 @@ from .const import SCREEN_HEIGHT, SCREEN_WIDTH
 
 
 class Meteor(pg.sprite.Sprite):
-    images = listdir('graphics/png/Meteors')
+    images = listdir('resources/graphics/png/Meteors')
 
     def __init__(self, speed=4):
         super(Meteor, self).__init__()
 
         self.speed = speed
-        enemy_image = f'graphics/png/Meteors/{self.images[randint(0, len(self.images) - 1)]}'
+        enemy_image = f'resources/graphics/png/Meteors/{self.images[randint(0, len(self.images) - 1)]}'
         self.image = pg.image.load(enemy_image).convert_alpha()
         self.image = pg.transform.rotozoom(self.image, 0, 0.7)
 

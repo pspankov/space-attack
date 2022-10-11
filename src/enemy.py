@@ -6,13 +6,13 @@ from .const import SCREEN_HEIGHT, SCREEN_WIDTH
 
 
 class Enemy(pg.sprite.Sprite):
-    images = listdir('graphics/png/Enemies')
+    images = listdir('resources/graphics/png/Enemies')
 
     def __init__(self, speed=4):
         super(Enemy, self).__init__()
 
         self.speed = speed
-        enemy_image = f'graphics/png/Enemies/{self.images[randint(0, len(self.images) - 1)]}'
+        enemy_image = f'resources/graphics/png/Enemies/{self.images[randint(0, len(self.images) - 1)]}'
         self.image = pg.image.load(enemy_image).convert_alpha()
         self.image = pg.transform.rotozoom(self.image, 0, 0.7)
 

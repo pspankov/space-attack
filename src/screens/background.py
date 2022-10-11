@@ -1,11 +1,11 @@
 import pygame as pg
-from .const import BACKGROUND_SPEED
+from ..const import BACKGROUND_SPEED
 
 
 class Background:
     def __init__(self, screen):
         self.screen = screen
-        self.bg_image = pg.image.load('graphics/backgrounds/640x480_background.png').convert()
+        self.bg_image = pg.image.load('resources/graphics/backgrounds/640x480_background.png').convert()
         self.bg_rect = self.bg_image.get_rect()
 
         self.bg_y1 = 0
