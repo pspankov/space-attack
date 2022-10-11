@@ -8,6 +8,7 @@ SCREEN_HEIGHT = 640
 BACKGROUND_SPEED = 5
 MENU_COLOR = '#b8c1e6'
 TITLE_COLOR = '#ffffff'
+SCORE_COLOR = '#ffffff'
 
 SCORE_FONT = pg.font.Font('resources/fonts/kenvector_future.ttf', 18)
 GAME_TITLE_FONT = pg.font.Font('resources/fonts/kenvector_future.ttf', 40)
