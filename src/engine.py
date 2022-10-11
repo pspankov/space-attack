@@ -3,6 +3,7 @@ from typing import Union
 import pygame as pg
 
 from .enemy import Enemy
+from .config import Config
 from .laser import Laser
 from .meteor import Meteor
 from .space_ship import SpaceShip
@@ -10,7 +11,7 @@ from .state import State
 
 
 class Engine:
-    def __init__(self, screen: Union[pg.surface.Surface, pg.surface.SurfaceType], state: State, config):
+    def __init__(self, screen: Union[pg.surface.Surface, pg.surface.SurfaceType], state: State, config: Config):
         self.screen = screen
         self.state = state
         self.config = config
@@ -21,7 +22,7 @@ class Engine:
         self.meteor_timer = pg.USEREVENT + 2
         self.set_meteor_spawn_time(3000)
 
-        self.space_ship = pg.sprite.GroupSingle(SpaceShip(config['p1_ship_type'], config['p1_ship_color']))
+        self.space_ship = pg.sprite.GroupSingle(SpaceShip(config.p1_ship_type, config.p1_ship_color))
         self.enemies_group = pg.sprite.Group()
         self.meteors_group = pg.sprite.Group()
         self.lasers_group = pg.sprite.Group()
@@ -38,7 +39,7 @@ class Engine:
         self.enemies_group.empty()
         self.meteors_group.empty()
         self.space_ship.empty()
-        self.space_ship.add(SpaceShip())
+        self.space_ship.add(SpaceShip(self.config.p1_ship_type, self.config.p1_ship_color))
 
     def hit(self):
         for laser in self.lasers_group.sprites():

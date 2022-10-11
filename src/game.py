@@ -1,6 +1,6 @@
 import pygame as pg
 
-from configparser import ConfigParser
+from src.config import Config
 from src.const import GAME_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from src.engine import Engine
 from src.music_player import MusicPlayer
@@ -14,14 +14,14 @@ class Game:
     def __init__(self):
 
         pg.display.set_caption(GAME_TITLE)
-        self.config = ConfigParser()
-        self.config.read('settings.ini')
+
+        self.config = Config('config.ini')
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
         self.clock = pg.time.Clock()
         self.state = State()
-        self.engine = Engine(self.screen, self.state, self.config['USER'])
-        self.ui = UI(self.screen, self.state, self.config['USER'])
+        self.engine = Engine(self.screen, self.state, self.config)
+        self.ui = UI(self.screen, self.state, self.config)
         self.music_player = MusicPlayer(self.state)
         self.background = Background(self.screen)
 

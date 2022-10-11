@@ -3,13 +3,14 @@ from typing import Union
 import pygame as pg
 
 from .const import SCORE_FONT, MENU_COLOR, SCREEN_WIDTH
+from .config import Config
 from .screens.game_menu import GameMenu
 from .screens.game_over import GameOver
 from .state import State
 
 
 class UI:
-    def __init__(self, screen: Union[pg.surface.Surface, pg.surface.SurfaceType], state: State, config):
+    def __init__(self, screen: Union[pg.surface.Surface, pg.surface.SurfaceType], state: State, config: Config):
         self.screen = screen
         self.game_state = state
         self.config = config
@@ -66,7 +67,7 @@ class LifeBar(pg.sprite.Sprite):
         self.config = config
         self.last_life_count = -1
         self.life_image = pg.image.load(
-            f"resources/graphics/png/UI/playerLife{self.config['p1_ship_type']}_{self.config['p1_ship_color']}.png")
+            f"resources/graphics/png/UI/playerLife{self.config.p1_ship_type}_{self.config.p1_ship_color}.png")
 
         self.life_bar_width = self.life_image.get_width() * self.game_state.lives + self.game_state.lives * 10
 

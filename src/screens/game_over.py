@@ -15,5 +15,5 @@ class GameOver(pg.sprite.Sprite):
         press_to_continue = self.subtitle_font.render('press <M>', True, self.color)
         self.image = pg.Surface((game_over_txt.get_width(), 300), pg.SRCALPHA)
         self.image.blit(game_over_txt, (0, 0))
-        self.image.blit(press_to_continue, (50, 50))
+        self.image.blit(press_to_continue, (55, 50))
         self.rect = self.image.get_rect(midtop=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 100))
