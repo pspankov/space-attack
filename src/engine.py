@@ -4,6 +4,7 @@ import pygame as pg
 
 from .enemy import Enemy
 from .config import Config
+from .explosion import Explosion
 from .laser import Laser
 from .meteor import Meteor
 from .space_ship import SpaceShip
@@ -22,32 +23,42 @@ class Engine:
         self.meteor_timer = pg.USEREVENT + 2
         self.set_meteor_spawn_time(3000)
 
-        self.space_ship = pg.sprite.GroupSingle(SpaceShip(config.p1_ship_type, config.p1_ship_color))
+        self.space_ship = pg.sprite.GroupSingle(SpaceShip(self.config.p1_ship, self.state))
         self.enemies_group = pg.sprite.Group()
         self.meteors_group = pg.sprite.Group()
         self.lasers_group = pg.sprite.Group()
-
-    def collision(self):
-        if pg.sprite.spritecollide(self.space_ship.sprite, self.enemies_group, True) or \
-                pg.sprite.spritecollide(self.space_ship.sprite, self.meteors_group, True):
-            return True
-
-        return False
+        self.explosion_group = pg.sprite.Group()
 
     def reset(self):
         self.state.reset()
+        self.space_ship.empty()
+        self.space_ship.add(SpaceShip(self.config.p1_ship, self.state))
         self.enemies_group.empty()
         self.meteors_group.empty()
-        self.space_ship.empty()
-        self.space_ship.add(SpaceShip(self.config.p1_ship_type, self.config.p1_ship_color))
+        self.explosion_group.empty()
 
     def hit(self):
         for laser in self.lasers_group.sprites():
-            if len(pg.sprite.spritecollide(laser, self.enemies_group, True)):
+            for enemy_hit in pg.sprite.spritecollide(laser, self.enemies_group, False):
                 laser.kill()
+                self.explosion_group.add(Explosion(enemy_hit))
+                enemy_hit.kill()
                 self.state.score += 1
             if len(pg.sprite.spritecollide(laser, self.meteors_group, False)):
                 laser.kill()
+
+    def collision(self):
+        for enemy in pg.sprite.spritecollide(self.space_ship.sprite, self.enemies_group, True):
+            self.explosion_group.add(Explosion(enemy))
+            self.explosion_group.add(Explosion(self.space_ship.sprite))
+            return True
+
+        for meteor in pg.sprite.spritecollide(self.space_ship.sprite, self.meteors_group, True):
+            self.explosion_group.add(Explosion(meteor))
+            self.explosion_group.add(Explosion(self.space_ship.sprite))
+            return True
+
+        return False
 
     def handle_state_events(self, events):
         for event in events:
@@ -90,11 +101,14 @@ class Engine:
             self.meteors_group.draw(self.screen)
             self.meteors_group.update()
 
+            self.explosion_group.draw(self.screen)
+            self.explosion_group.update()
+
             self.hit()
 
             if self.collision():
                 self.state.lives -= 1
-                if self.state.lives <= 0:
+                if self.state.lives < 0:
                     self.state.game_over = True
 
     def set_enemy_spawn_time(self, time):

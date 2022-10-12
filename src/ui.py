@@ -3,7 +3,7 @@ from typing import Union
 import pygame as pg
 
 from .const import SCORE_FONT, MENU_COLOR, SCREEN_WIDTH, SCORE_COLOR
-from .config import Config
+from .config import Config, ShipConfig
 from .screens.game_menu import GameMenu
 from .screens.game_over import GameOver
 from .state import State
@@ -18,7 +18,7 @@ class UI:
         self.game_menu = GameMenu(self.screen, self.game_state)
         self.game_over = pg.sprite.Group(GameOver())
         self.score = pg.sprite.Group(Score(self.game_state))
-        self.life_bar = pg.sprite.Group(LifeBar(self.game_state, config))
+        self.life_bar = pg.sprite.Group(LifeBar(self.game_state, config.p1_ship))
         self.level = pg.sprite.Group(Level(self.game_state))
 
     def handle_input(self, events):
@@ -55,7 +55,7 @@ class Score(pg.sprite.Sprite):
         self.last_score = -1
         self.font = SCORE_FONT
         self.update()
-        self.rect = self.image.get_rect(midbottom=(SCREEN_WIDTH/2, self.image.get_height() + 10))
+        self.rect = self.image.get_rect(midbottom=(SCREEN_WIDTH / 2, self.image.get_height() + 10))
 
     def update(self):
         if self.game_state.score != self.last_score:
@@ -64,14 +64,14 @@ class Score(pg.sprite.Sprite):
 
 
 class LifeBar(pg.sprite.Sprite):
-    def __init__(self, game_state: State, config):
+    def __init__(self, game_state: State, ship_config: ShipConfig):
         super(LifeBar, self).__init__()
 
         self.game_state = game_state
-        self.config = config
+        self.ship_config = ship_config
         self.last_life_count = -1
-        self.life_image = pg.image.load(
-            f"resources/graphics/png/UI/playerLife{self.config.p1_ship_type}_{self.config.p1_ship_color}.png")
+        life_icon = f"resources/graphics/png/UI/playerLife{self.ship_config.type}_{self.ship_config.color}.png"
+        self.life_image = pg.image.load(life_icon).convert_alpha()
         self.life_image = pg.transform.rotozoom(self.life_image, 0, 0.7)
         self.life_bar_width = self.life_image.get_width() * self.game_state.lives + self.game_state.lives * 10
 
